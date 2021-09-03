@@ -1,13 +1,19 @@
 name: "Blog1"
-title: "Kaihao Chen"
+title: "Blog-Covid"
+theme: "kc_theme.css"
 description: |
   Kaihao Chen
 output_dir: "_site"
 navbar:
+  logo:
+    image: image3.png
   right:
     - text: "Home"
       href: index.html
     - text: "ISRAEL"
-      href: about.html
-output: distill::distill_article
+      href: Israel.html
+  search: true
+output: 
+  distill::distill_article:
+    css: "style.css"
 

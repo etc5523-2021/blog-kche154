@@ -1,0 +1,229 @@
+---
+title: "Covid-19 status - Israel"
+description: |
+author:
+  - name: Kaihao Chen
+    url: 
+date: "`r Sys.Date()`"
+output:
+  distill::distill_article:
+    toc: true
+    toc_float: true
+    css: "style.css"
+    self_contained: false
+---
+
+![](image1.jpg){width=200}
+
+## Introduction
+
+This is a data exploration on covid-status in Israel. Let's have a look about how many cases, deaths, and how is the vaccinating status going in Israel. 
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+library(kableExtra)
+library(gt)
+library(DT)
+library(here)
+library(dplyr)
+library(naniar)
+```
+
+```{r}
+covid_data <- read.csv("https://covid.ourworldindata.org/data/owid-covid-data.csv")
+
+```
+
+## Data description
+
+The data is extracted from [Data on COVID-19 (coronavirus) by Our World in Data](https://github.com/owid/covid-19-data/tree/master/public/data). The original data is in tabular format with dimensions of **`r dim(covid_data)`**.
+
+| Variable                         | Description                                                           |
+|:---------------------------------|:----------------------------------------------------------------------|
+| `total_cases`                    | Total confirmed cases of COVID-19                                     |
+| `new_cases`                      | New confirmed cases of COVID-19                                       |
+| `total_cases_per_million`        | Total confirmed cases of COVID-19 per 1,000,000 people                |
+| `new_cases_per_million`          | New confirmed cases of COVID-19 per 1,000,000 people                  |
+| `total_deaths`                    | Total deaths attributed to COVID-19                                     |
+| `new_deaths`                      | New deaths attributed to COVID-19                                       |
+| `total_deaths_per_million`        | Total deaths attributed to COVID-19 per 1,000,000 people                |
+| `new_deaths_per_million`          | New deaths attributed to COVID-19 per 1,000,000 people                  |
+| `total_tests`                     | Total tests for COVID-19                                                                   |
+| `new_tests`                       | New tests for COVID-19 (only calculated for consecutive days)                   
+| `total_vaccinations`                    | Total number of COVID-19 vaccination doses administered                                                                                                                                                                                                                                                                                           |
+| `people_vaccinated`                     | Total number of people who received at least one vaccine dose                                                                                                                                                                                                                                                                                     |
+| `people_fully_vaccinated`               | Total number of people who received all doses prescribed by the vaccination protocol                                                                                                                                                                                                                                                              |
+| `new_vaccinations`                      | New COVID-19 vaccination doses administered (only calculated for consecutive days)                                                                                                                                                                                                                                                                |
+| `location`                   | Geographical location                                                                                                                                                                                                                      |
+| `date`                       | Date of observation                                                                                                                                                                                                                        |
+| `population`                 | Population in 2020                                                                                                                                                                                                                         |
+
+
+
+```{r}
+Israel <- covid_data %>%
+  filter(location == "Israel") %>%
+  select("date", 
+         "total_cases", "new_cases", 
+         "total_deaths", "new_deaths",
+         "total_tests", "new_tests",
+         "total_vaccinations",
+         "people_vaccinated",
+         "people_fully_vaccinated",
+         "population") %>%
+  mutate(Month = month(date),
+         Year = year(date)) %>%
+  arrange(Year)
+
+```
+
+```{r}
+vis_miss(Israel)
+```
+
+The figure clearly shows there are some variables with missing values and all missing values are set as 0 before any data exploration.
+
+```{r}
+Israel[is.na(Israel)] <- 0
+```
+
+## Data exploration
+
+# Daily updating covid-19 status
+
+The following table is a daily updating table. We could have a general idea about the covid-19 status in Israel. 
+
+```{r}
+Israel_brief <- Israel %>%
+  select(-total_cases,
+         -total_deaths,
+         -total_tests,
+         -new_tests,
+         -total_vaccinations, 
+         -population,
+         -Month,
+         -Year)
+
+DT::datatable(Israel_brief,
+              options = list(pageLength = 5),
+              caption = "Daily Covid 19 Update in Israel") %>%
+  formatStyle('new_cases',
+              target = 'cell',
+              backgroundColor = "lightblue")
+```
+
+There is an interesting finding in **New_deaths**: negative numbers are popped up. 
+
+# The vaccination effect on death 
+
+As the country with the highest rate of vaccination, it's good to have a look on the relationship between vaccination and death. 
+
+```{r}
+Israel_dv <- Israel %>%
+  select("new_deaths",
+         "people_vaccinated",
+         "people_fully_vaccinated")
+
+date_col <- Israel %>%
+  select("date")
+
+date <- as.Date(date_col$date, format = "%Y-%m-%d")
+
+Israel_dv <- cbind(Israel_dv, date) %>%
+  pivot_longer(-date, names_to = "death_and_vaccinated_rate")
+
+```
+
+```{r}
+d_v_plot <- ggplot(Israel_dv, aes(x = date, y = value,
+                                  group = death_and_vaccinated_rate,
+                                  color = death_and_vaccinated_rate)) +
+  geom_line() +
+  geom_point() +
+  ggtitle("Death & vaccination in Israel") +
+  ylab("Number of people") 
+
+d_v_plot
+```
+
+# Statistic summary
+
+```{r}
+Israel_sum1 <- Israel %>%
+  group_by(Month, Year) %>%
+  summarise(Cases = round(mean(new_cases),2),
+            Death = round(mean(new_deaths),2),
+            Tests = round(mean(new_tests),2),
+            FullVaccinated = round(mean(people_fully_vaccinated),2))
+```
+ 
+```{r}
+sum1 <- Israel_sum1 %>%
+  pivot_longer(Cases : FullVaccinated,
+               names_to = "Variables",
+               values_to = "mean")
+
+```
+
+```{r}
+Israel_sum2 <- Israel %>%
+  group_by(Year) %>%
+  summarise(Cases = round(sd(new_cases),2),
+            Death = round(sd(new_deaths),2),
+            Tests = round(sd(new_tests),2),
+            FullVaccinated = round(sd(people_fully_vaccinated),2))
+
+
+```
+
+```{r}
+sum2 <- Israel_sum2 %>%
+  pivot_longer(Cases : FullVaccinated,
+               names_to = "Variables",
+               values_to = "sd")
+```
+
+```{r}
+combine <- left_join(sum1, sum2)
+
+combine %>% 
+  DT::datatable(options = list(pagelength = 10))
+```
+
+# Reference
+
+Wickham et al., (2019). Welcome to the tidyverse. Journal of Open Source Software,
+  4(43), 1686, https://doi.org/10.21105/joss.01686
+  
+Garrett Grolemund, Hadley Wickham (2011). Dates and Times Made Easy with lubridate.
+  Journal of Statistical Software, 40(3), 1-25. URL https://www.jstatsoft.org/v40/i03/.
+  
+H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York,
+  2016.
+  
+Hao Zhu (2021). kableExtra: Construct Complex Table with 'kable' and Pipe Syntax. R
+  package version 1.3.4. https://CRAN.R-project.org/package=kableExtra
+  
+Richard Iannone, Joe Cheng and Barret Schloerke (2021). gt: Easily Create
+  Presentation-Ready Display Tables. R package version 0.3.1.
+  https://CRAN.R-project.org/package=gt
+  
+Yihui Xie, Joe Cheng and Xianying Tan (2021). DT: A Wrapper of the JavaScript Library
+  'DataTables'. R package version 0.18. https://CRAN.R-project.org/package=DT
+  
+Kirill Müller (2020). here: A Simpler Way to Find Your Files. R package version 1.0.1.
+  https://CRAN.R-project.org/package=here
+  
+Hadley Wickham, Romain François, Lionel Henry and Kirill Müller (2021). dplyr: A
+  Grammar of Data Manipulation. R package version 1.0.7.
+  https://CRAN.R-project.org/package=dplyr
+
+Nicholas Tierney, Di Cook, Miles McBain and Colin Fay (2021). naniar: Data Structures,
+  Summaries, and Visualisations for Missing Data. R package version 0.6.1.
+  https://CRAN.R-project.org/package=naniar
+

@@ -1,8 +1,17 @@
 ---
 title: "The Covid-19 status"
-description: |
-  Welcome to the website. This blog will talking about the covid-19 status in different country. First one will be Israel, as the country with the highest rate of people vaccinated. There is definately something we could explore. Second country is Chile, let's see how is the covid situation going in this South America country. 
-  I hope you enjoy it!
+image: "image2.jpeg"
+links:
+  - label: WHO-int
+    url: "https://covid19.who.int/"
+  - label: WorldOMeter
+    url: "https://www.worldometers.info/coronavirus/"
+  - label: Israel health
+    url: "https://corona.health.gov.il/en/"
+  - label: CHILE reports
+    url: "https://chilereports.cl/en"
+output:
+  postcards::jolla
 site: distill::distill_website
 ---
 
@@ -11,4 +20,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ```
 
-![](image2.jpeg){width=200}
+
+
+  Welcome to the website. This blog will talking about the covid-19 status in different country. First one will be Israel, as the country with the highest rate of people vaccinated. There is definitely something we could explore. Second country is Chile, let's see how is the covid situation going in this South America country. 
+  I hope you enjoy it!

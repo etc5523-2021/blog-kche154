@@ -1,6 +1,6 @@
 ---
 title: "Covid-19 status - Israel"
-description: |
+description: "How is Israel doing during this covid-19 pandemic?"
 author:
   - name: Kaihao Chen
     url: 

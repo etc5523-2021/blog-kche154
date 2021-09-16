@@ -1,6 +1,6 @@
 ---
 title: "Covid-19 status - Chile"
-description: |
+description: "How is Chile doing during this covid-19 pandemic?"
 author:
   - name: Kaihao Chen
     url: 
@@ -45,12 +45,8 @@ The data is extracted from [Data on COVID-19 (coronavirus) by Our World in Data]
 |:---------------------------------|:----------------------------------------------------------------------|
 | `total_cases`                    | Total confirmed cases of COVID-19                                     |
 | `new_cases`                      | New confirmed cases of COVID-19                                       |
-| `total_cases_per_million`        | Total confirmed cases of COVID-19 per 1,000,000 people                |
-| `new_cases_per_million`          | New confirmed cases of COVID-19 per 1,000,000 people                  |
 | `total_deaths`                    | Total deaths attributed to COVID-19                                     |
 | `new_deaths`                      | New deaths attributed to COVID-19                                       |
-| `total_deaths_per_million`        | Total deaths attributed to COVID-19 per 1,000,000 people                |
-| `new_deaths_per_million`          | New deaths attributed to COVID-19 per 1,000,000 people                  |
 | `total_tests`                     | Total tests for COVID-19                                                                   |
 | `new_tests`                       | New tests for COVID-19 (only calculated for consecutive days)                   
 | `total_vaccinations`                    | Total number of COVID-19 vaccination doses administered                                                                                                                                                                                                                                                                                           |
@@ -69,7 +65,6 @@ Chile <- covid_data %>%
   select("date", 
          "new_cases", 
          "new_deaths",
-         "icu_patients",
          "new_tests",
          "people_vaccinated",
          "people_fully_vaccinated",

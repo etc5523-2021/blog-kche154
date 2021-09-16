@@ -28,6 +28,8 @@ library(ggplot2)
 library(tidycovid19)
 library(scales)
 library(plotly)
+library(dygraphs)
+library(xts)
 ```
 
 ```{r}
@@ -65,10 +67,10 @@ The data is extracted from [Data on COVID-19 (coronavirus) by Our World in Data]
 Chile <- covid_data %>%
   filter(location == "Chile") %>%
   select("date", 
-         "total_cases", "new_cases", 
-         "total_deaths", "new_deaths",
-         "total_tests", "new_tests",
-         "total_vaccinations",
+         "new_cases", 
+         "new_deaths",
+         "icu_patients",
+         "new_tests",
          "people_vaccinated",
          "people_fully_vaccinated",
          "population")
@@ -91,12 +93,12 @@ Chile[is.na(Chile)] <- 0
 
 Let's have a look on the following plot to get a general idea about the new covid-19 cases (daily) in Chile over a year from February 2020 to today (September 2021).
 
-```{r}
+```{r fig.cap="Daily cases in Chile"}
 Chile$date = as.Date(Chile$date, "%Y-%m-%d")
 
 Chile_plot1 <- Chile %>% 
   ggplot(aes(date, new_cases)) + 
-  geom_col(colour = "#9999FF") +
+  geom_col(colour = "dark grey") +
   scale_x_date(limits = c(as.Date("2020-02-01"), as.Date("2021-10-01")),
                breaks = seq.Date(as.Date("2020-02-01"), 
                                  as.Date("2021-09-14"), 
@@ -121,7 +123,7 @@ Chile_plot1 <- Chile %>%
   geom_col(data = filter(Chile, (date > "2020-05-15" & date < "2020-06-30") | 
                            (date > "2021-03-01" & date < "2021-04-30") |
                            (date > "2021-05-15" & date < "2021-06-30")),
-           color = "#6600CC")
+           color = "black")
 
 ggplotly(Chile_plot1)
 ```
@@ -129,10 +131,46 @@ ggplotly(Chile_plot1)
 According to the plot, it is clearly to see there are three peaks of increasing cases, which are around June 2020, April 2021, and June 2021. The highest daily new case that Chile reached was **13990** on **06-06-2020**. It seems the month of **June** is always experiencing dramatic booming on new cases. Is this just a coincidence? Or it relates to any specific reason? Like transition season?
 
 
-# 
+# Vaccination
+
+```{r covidplot, fig.width = 12, fig.cap = "Daily deaths and vaccination trend in Chile", fig.align='center'}
+
+c_dy <- Chile %>%
+  select(date, new_deaths, people_vaccinated)
+
+c_dy <- c_dy %>%
+  xts(order.by = c_dy$date) 
+
+c_graph <- dygraph(c_dy, main = "The effection of vaccination on daily cases and deaths") %>%
+  dyAxis("y",label = "new_deaths") %>%
+  dyAxis("y2", label = "people_vaccinated") %>%
+  dySeries("new_deaths", 
+           axis = "y", 
+           label = "New deaths",
+           stepPlot = TRUE, 
+           fillGraph = TRUE, 
+           color = "black") %>%
+  dySeries("people_vaccinated", 
+           axis = "y2", 
+           stepPlot = TRUE, 
+           color = "orange") %>%
+  dyOptions(includeZero = TRUE, 
+            axisLineColor = "navy", 
+            gridLineColor = "lightblue") %>%
+  dyRangeSelector() %>%
+  dyHighlight(highlightCircleSize = 5, 
+              highlightSeriesBackgroundAlpha = 0.2,
+              hideOnMouseOut = FALSE) %>%
+  dyLegend(show = "always", hideOnMouseOut = FALSE)
+
+c_graph
+```
+
+Although people in Chile started to get vaccination from December 24th 2020, from previous plot we had known the daily cases were keeping going up for about four to six month, then it started to drop dramatically after June 2021. And from this plot, we focusing on the influence of vaccination on death. It is a bit surprised that the number of daily death wasn't going down for nearly a year after people started to get vaccination. The number of death starts to show a trend to drop until recent month, after July 2021. 
 
 
 # Reference
+
 
 
 

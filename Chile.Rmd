@@ -1,0 +1,138 @@
+---
+title: "Covid-19 status - Chile"
+description: |
+author:
+  - name: Kaihao Chen
+    url: 
+date: "`r Sys.Date()`"
+output:
+  distill::distill_article:
+    toc: true
+    toc_float: true
+    css: "style.css"
+    self_contained: false
+---
+
+![](AP_Chile_VaccineCard_1250.jpg){width=200}
+
+## Introduction
+
+This is a data exploration on covid-status in Chile. Let's have a look about how many cases, deaths, and how is the vaccinating status going in Chile. 
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(naniar)
+library(tidyverse)
+library(ggplot2)
+library(tidycovid19)
+library(scales)
+library(plotly)
+```
+
+```{r}
+covid_data <- read.csv("https://covid.ourworldindata.org/data/owid-covid-data.csv")
+
+```
+
+## Data description
+
+The data is extracted from [Data on COVID-19 (coronavirus) by Our World in Data](https://github.com/owid/covid-19-data/tree/master/public/data). The original data is in tabular format with dimensions of **`r dim(covid_data)`**.
+
+| Variable                         | Description                                                           |
+|:---------------------------------|:----------------------------------------------------------------------|
+| `total_cases`                    | Total confirmed cases of COVID-19                                     |
+| `new_cases`                      | New confirmed cases of COVID-19                                       |
+| `total_cases_per_million`        | Total confirmed cases of COVID-19 per 1,000,000 people                |
+| `new_cases_per_million`          | New confirmed cases of COVID-19 per 1,000,000 people                  |
+| `total_deaths`                    | Total deaths attributed to COVID-19                                     |
+| `new_deaths`                      | New deaths attributed to COVID-19                                       |
+| `total_deaths_per_million`        | Total deaths attributed to COVID-19 per 1,000,000 people                |
+| `new_deaths_per_million`          | New deaths attributed to COVID-19 per 1,000,000 people                  |
+| `total_tests`                     | Total tests for COVID-19                                                                   |
+| `new_tests`                       | New tests for COVID-19 (only calculated for consecutive days)                   
+| `total_vaccinations`                    | Total number of COVID-19 vaccination doses administered                                                                                                                                                                                                                                                                                           |
+| `people_vaccinated`                     | Total number of people who received at least one vaccine dose                                                                                                                                                                                                                                                                                     |
+| `people_fully_vaccinated`               | Total number of people who received all doses prescribed by the vaccination protocol                                                                                                                                                                                                                                                              |
+| `new_vaccinations`                      | New COVID-19 vaccination doses administered (only calculated for consecutive days)                                                                                                                                                                                                                                                                |
+| `location`                   | Geographical location                                                                                                                                                                                                                      |
+| `date`                       | Date of observation                                                                                                                                                                                                                        |
+| `population`                 | Population in 2020                                                                                                                                                                                                                         |
+
+
+
+```{r}
+Chile <- covid_data %>%
+  filter(location == "Chile") %>%
+  select("date", 
+         "total_cases", "new_cases", 
+         "total_deaths", "new_deaths",
+         "total_tests", "new_tests",
+         "total_vaccinations",
+         "people_vaccinated",
+         "people_fully_vaccinated",
+         "population")
+
+```
+
+```{r}
+vis_miss(Chile)
+```
+
+The figure clearly shows there are some variables with missing values and all missing values are set as 0 before any data exploration.
+
+```{r}
+Chile[is.na(Chile)] <- 0
+```
+
+## Data exploration
+
+# Daily updating covid-19 status
+
+Let's have a look on the following plot to get a general idea about the new covid-19 cases (daily) in Chile over a year from February 2020 to today (September 2021).
+
+```{r}
+Chile$date = as.Date(Chile$date, "%Y-%m-%d")
+
+Chile_plot1 <- Chile %>% 
+  ggplot(aes(date, new_cases)) + 
+  geom_col(colour = "#9999FF") +
+  scale_x_date(limits = c(as.Date("2020-02-01"), as.Date("2021-10-01")),
+               breaks = seq.Date(as.Date("2020-02-01"), 
+                                 as.Date("2021-09-14"), 
+                                 by = "6 months"),
+               labels = date_format("%Y-%m-%d")) +
+  scale_y_continuous(limits = c(0,15000),
+                     expand = c(0,0)) +
+  labs(x = "Date",
+       y = "New Cases",
+       title = "New covid 19 cases in Chile by time") +
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.background = element_rect(colour = "grey50", size = 2),
+        panel.background = element_rect(fill = "lightblue3", colour = NA),
+        panel.grid.major.y = element_line(color = "gray60", 
+                                          size = 0.8, 
+                                          linetype = "dashed"),
+        text = element_text(colour = "black"),
+        axis.text = element_text(colour = "black"),
+        axis.title = element_text(colour = "black"),
+        axis.line = element_line(colour = "grey50", size = 1),
+        plot.margin = margin(2, 2, 2, 2)) +
+  geom_col(data = filter(Chile, (date > "2020-05-15" & date < "2020-06-30") | 
+                           (date > "2021-03-01" & date < "2021-04-30") |
+                           (date > "2021-05-15" & date < "2021-06-30")),
+           color = "#6600CC")
+
+ggplotly(Chile_plot1)
+```
+
+According to the plot, it is clearly to see there are three peaks of increasing cases, which are around June 2020, April 2021, and June 2021. The highest daily new case that Chile reached was **13990** on **06-06-2020**. It seems the month of **June** is always experiencing dramatic booming on new cases. Is this just a coincidence? Or it relates to any specific reason? Like transition season?
+
+
+# 
+
+
+# Reference
+
+
+

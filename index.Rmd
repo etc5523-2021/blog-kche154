@@ -1,7 +1,7 @@
 ---
 title: "The Covid-19 status"
 description: |
-  Welcome to the website. This blog will talking about the covid-19 status in different country. First one will be Israel, as the country with the highest rate of people vaccinated. There is definately something we could explore. Second country hasn't been decided, the exploration of it is coming soon. 
+  Welcome to the website. This blog will talking about the covid-19 status in different country. First one will be Israel, as the country with the highest rate of people vaccinated. There is definately something we could explore. Second country is Chile, let's see how is the covid situation going in this South America country. 
   I hope you enjoy it!
 site: distill::distill_website
 ---

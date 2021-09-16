@@ -1,4 +1,4 @@
-name: "Blog1"
+name: "Blog"
 title: "Blog-Covid"
 theme: "kc_theme.css"
 description: |
@@ -12,6 +12,8 @@ navbar:
       href: index.html
     - text: "ISRAEL"
       href: Israel.html
+    - text: "CHILE"
+      href: Chile.html
   search: true
 output: 
   distill::distill_article:

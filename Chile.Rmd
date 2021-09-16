@@ -17,7 +17,7 @@ output:
 
 ## Introduction
 
-This is a data exploration on covid-status in Chile. Let's have a look about how many cases, deaths, and how is the vaccinating status going in Chile. 
+Chile trails only Israel and the UAE in vaccine doses per 100 inhabitants worldwide, but new cases have risen quickly amid mixed health messaging, travel over the southern hemisphere summer holidays and the circulation of new variants. This is a data exploration on covid-status in Chile. Let's have a look about how many cases, deaths, and how is the vaccinating status going in Chile. 
 
 
 ```{r setup, include=FALSE}
@@ -128,7 +128,7 @@ Chile_plot1 <- Chile %>%
 ggplotly(Chile_plot1)
 ```
 
-According to the plot, it is clearly to see there are three peaks of increasing cases, which are around June 2020, April 2021, and June 2021. The highest daily new case that Chile reached was **13990** on **06-06-2020**. It seems the month of **June** is always experiencing dramatic booming on new cases. Is this just a coincidence? Or it relates to any specific reason? Like transition season?
+According to the plot, it is clearly to see there are three peaks of increasing cases, which are around June 2020, April 2021, and June 2021. The highest daily new case that Chile reached was **13990** on **06-06-2020**. It seems the month of **June** is always experiencing dramatic booming on new cases. Is this just a coincidence? Or it relates to any specific reason? Like transition season? Or lockdown restriction changes? I did a bit research on the lockdown policy of Chile, turns out the international travel in Chile is still allowed, and the flight are still chaep. Therefore, many Chileans took advantage of it to Miami, Brazil, the Dominican Republic and other destinations which causing the government to tighten restrictions for returning travelers. However, they did not tighten the restrictions until after the summer holiday season was over.
 
 
 # Vaccination
@@ -166,11 +166,39 @@ c_graph <- dygraph(c_dy, main = "The effection of vaccination on daily cases and
 c_graph
 ```
 
-Although people in Chile started to get vaccination from December 24th 2020, from previous plot we had known the daily cases were keeping going up for about four to six month, then it started to drop dramatically after June 2021. And from this plot, we focusing on the influence of vaccination on death. It is a bit surprised that the number of daily death wasn't going down for nearly a year after people started to get vaccination. The number of death starts to show a trend to drop until recent month, after July 2021. 
+Although people in Chile started to get vaccination from December 24th 2020, from previous plot we had known the daily cases were keeping going up for about four to six month, then it started to drop dramatically after June 2021. And from this plot, we focusing on the influence of vaccination on death. There is an interesting finding which the the number of daily death wasn't going down for nearly a year after people started to get vaccination. The number of death starts to show a trend to drop until recent month, after July 2021. It seems the influence of the vaccination needs a period of time to start. 
 
 
 # Reference
+Nicholas Tierney, Di Cook, Miles McBain and Colin Fay (2021). naniar: Data
+  Structures, Summaries, and Visualisations for Missing Data. R package
+  version 0.6.1. https://CRAN.R-project.org/package=naniar
+  
+Wickham et al., (2019). Welcome to the tidyverse. Journal of Open Source
+  Software, 4(43), 1686, https://doi.org/10.21105/joss.01686
+  
+H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag
+  New York, 2016.
+  
+Joachim Gassen (2021). tidycovid19: Download, Tidy and Visualize Covid-19
+  Related Data. R package version 0.0.0.9000.
+  
+Hadley Wickham and Dana Seidel (2020). scales: Scale Functions for
+  Visualization. R package version 1.1.1.
+  https://CRAN.R-project.org/package=scales
 
+C. Sievert. Interactive Web-Based Data Visualization with R, plotly, and
+  shiny. Chapman and Hall/CRC Florida, 2020.
+  
+Dan Vanderkam, JJ Allaire, Jonathan Owen, Daniel Gromer and Benoit
+  Thieurmel (2018). dygraphs: Interface to 'Dygraphs' Interactive Time Series
+  Charting Library. R package version 1.1.1.6.
+  https://CRAN.R-project.org/package=dygraphs
+  
+Jeffrey A. Ryan and Joshua M. Ulrich (2020). xts: eXtensible Time Series. R
+  package version 0.12.1. https://CRAN.R-project.org/package=xts
+  
+John Bartlett https://www.theguardian.com/global-development/2021/mar/28/chile-coronavirus-lockdowns-vaccination-success
 
 
 

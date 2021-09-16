@@ -28,7 +28,7 @@ This assessment is due Fri Sep 17 2021 11.55PM AEST.
 
 My selected country is [FILL].
 
-The relevant blog post for this assessment is in [FILL].html
+The relevant blog post for this assessment is in https://kche154-blog.netlify.app/chile
 
 - [ ] Selected a new country
 - [ ] Data Story 1
